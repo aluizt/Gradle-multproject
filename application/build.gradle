@@ -1,0 +1,12 @@
+
+apply plugin: 'org.springframework.boot'
+
+project(':application') {
+    dependencies {
+        implementation project(':contract')
+        implementation project(':implementation')
+        compileOnly 'org.projectlombok:lombok:1.18.8'
+        annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    }
+}
+
