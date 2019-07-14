@@ -6,6 +6,7 @@ import br.com.estagio.testesgradle.contract.v1.user.model.UserResponseWithFriend
 import br.com.estagio.testesgradle.contract.v1.user.model.UserSave;
 import br.com.estagio.testesgradle.contract.v1.user.model.UserUpdate;
 import br.com.estagio.testesgradle.contract.v1.user.pagination.UserPagination;
+import br.com.estagio.testesgradle.user.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.repository.support.PageableExecutionUtils;
@@ -26,12 +27,14 @@ public class UserFacade {
     private final UserService userService;
     private final UserMapper userMapper;
     private final UserPagination userPagination;
+    private final UserValidation userValidation;
 
     @Autowired
-    public UserFacade(UserService userService, UserMapper userMapper, UserPagination userPagination) {
+    public UserFacade(UserService userService, UserMapper userMapper, UserPagination userPagination, UserValidation userValidation) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.userPagination = userPagination;
+        this.userValidation = userValidation;
     }
 
     public List<UserResponse> getListAllUsers(){
@@ -52,7 +55,10 @@ public class UserFacade {
     }
 
     public UserResponse save(UserSave userSave){
-        return userMapper.mapToUserResponse(userService.incluirUsuario(userMapper.mapToUser(userSave)));
+        return userMapper.mapToUserResponse(
+                userService.incluirUsuario(
+                        userValidation.validateUser(
+                                userMapper.mapToUser(userSave))));
     }
 
     public UserResponse update(UserUpdate userUpdate, String id){
